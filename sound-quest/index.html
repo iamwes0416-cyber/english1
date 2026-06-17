@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Word Ending Practice</title>
+  <style>
+    :root {
+      --ink: #20302b;
+      --muted: #5d6b64;
+      --paper: #fffaf0;
+      --panel: #ffffff;
+      --line: #d8e5dc;
+      --green: #2f7d5c;
+      --green-dark: #1d5c42;
+      --yellow: #f2c14e;
+      --blue: #3d6f90;
+      --rose: #d9786f;
+      --shadow: 0 18px 45px rgba(32, 48, 43, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Segoe UI", "Noto Sans TC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(242, 193, 78, 0.34), transparent 30rem),
+        linear-gradient(135deg, #f7fbf6 0%, var(--paper) 48%, #e8f2f4 100%);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    header {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .toolbar select,
+    .toolbar button,
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      padding: 10px 14px;
+      font: inherit;
+      box-shadow: 0 6px 20px rgba(32, 48, 43, 0.06);
+    }
+
+    .toolbar button {
+      cursor: pointer;
+    }
+
+    .toolbar select {
+      max-width: min(100%, 280px);
+      cursor: pointer;
+    }
+
+    .toolbar button:hover,
+    .toolbar select:hover,
+    .toolbar select:focus-visible,
+    .toolbar button:focus-visible {
+      border-color: var(--green);
+      color: var(--green-dark);
+      outline: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .section {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 2px solid rgba(47, 125, 92, 0.16);
+      padding-bottom: 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.7vw, 2rem);
+      letter-spacing: 0;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .families {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .family {
+      min-height: 100%;
+      border-left: 6px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px;
+    }
+
+    .family:nth-child(2n) {
+      border-left-color: var(--blue);
+    }
+
+    .family:nth-child(3n) {
+      border-left-color: var(--rose);
+    }
+
+    .ending {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 800;
+      color: var(--green-dark);
+      font-size: 1.2rem;
+    }
+
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 10px;
+    }
+
+    .word {
+      min-height: 142px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: #f4f8f1;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+      place-items: center;
+      text-align: center;
+      font: inherit;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .word:hover,
+    .word:focus-visible {
+      border-color: var(--yellow);
+      background: #fff7d9;
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .word.active {
+      border-color: var(--green);
+      background: #e5f4e7;
+    }
+
+    .picture {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(32, 48, 43, 0.08);
+      font-size: 2.35rem;
+      line-height: 1;
+    }
+
+    .english {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .zh {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .focus-practice {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+    }
+
+    .focus-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+      border-bottom: 2px solid rgba(61, 111, 144, 0.16);
+      padding-bottom: 10px;
+    }
+
+    .focus-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .sound-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .sound-card {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f9fbf6;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .rime-button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--ink);
+      color: white;
+      min-height: 68px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font: inherit;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .rime-button:hover,
+    .rime-button:focus-visible {
+      outline: 3px solid rgba(242, 193, 78, 0.7);
+    }
+
+    .rime-button.active {
+      outline: 4px solid rgba(242, 193, 78, 0.9);
+    }
+
+    .vowel {
+      color: var(--yellow);
+    }
+
+    .tail {
+      color: #a8d8c4;
+    }
+
+    .sound-note {
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .mini-words {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mini-word {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 9px 7px;
+      display: grid;
+      gap: 3px;
+      place-items: center;
+      font: inherit;
+      min-height: 62px;
+    }
+
+    .mini-word strong {
+      font-size: 1.2rem;
+    }
+
+    .mini-word span {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .mini-word:hover,
+    .mini-word:focus-visible,
+    .mini-word.active {
+      border-color: var(--yellow);
+      outline: none;
+      background: #fff7d9;
+    }
+
+    .listen-quiz {
+      border-radius: 8px;
+      border: 2px solid rgba(47, 125, 92, 0.22);
+      background: #eef7ee;
+      padding: 16px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .quiz-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .quiz-title {
+      display: grid;
+      gap: 4px;
+    }
+
+    .quiz-title strong {
+      font-size: 1.25rem;
+    }
+
+    .quiz-title span {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .quiz-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quiz-actions button,
+    .quiz-choice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      padding: 11px 14px;
+    }
+
+    .quiz-actions button:hover,
+    .quiz-actions button:focus-visible,
+    .quiz-choice:hover,
+    .quiz-choice:focus-visible {
+      border-color: var(--green);
+      outline: none;
+    }
+
+    .quiz-choices {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .quiz-choice {
+      min-height: 62px;
+      font-size: 1.3rem;
+    }
+
+    .quiz-choice.correct {
+      border-color: var(--green);
+      background: #dff2e6;
+      color: var(--green-dark);
+    }
+
+    .quiz-choice.wrong {
+      border-color: var(--rose);
+      background: #ffe9e6;
+      color: #8c2f28;
+    }
+
+    .all-quiz {
+      margin-bottom: 18px;
+      background: #f8fbff;
+      border-color: rgba(61, 111, 144, 0.25);
+    }
+
+    .all-quiz .quiz-choices {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .quiz-feedback {
+      min-height: 28px;
+      color: var(--ink);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .split-word {
+      display: inline-flex;
+      gap: 1px;
+      align-items: baseline;
+    }
+
+    .split-word .middle {
+      color: var(--rose);
+      font-size: 1.18em;
+    }
+
+    .status {
+      min-height: 58px;
+      margin-top: 18px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: white;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .status strong {
+      font-size: 1.25rem;
+    }
+
+    .note {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100% - 22px, 1180px);
+        padding-top: 22px;
+      }
+
+      .section {
+        padding: 14px;
+      }
+
+      .focus-practice {
+        padding: 14px;
+      }
+
+      .families {
+        grid-template-columns: 1fr;
+      }
+
+      .word-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quiz-choices {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .word {
+        min-height: 132px;
+      }
+
+      .status {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    /* Kid game skin */
+    body {
+      color: #213047;
+      font-family: "Comic Sans MS", "Trebuchet MS", "Noto Sans TC", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255, 212, 59, 0.7), transparent 11rem),
+        radial-gradient(circle at 86% 12%, rgba(84, 214, 223, 0.5), transparent 13rem),
+        radial-gradient(circle at 78% 72%, rgba(255, 107, 138, 0.35), transparent 15rem),
+        linear-gradient(135deg, #f2fbff 0%, #fff7d7 48%, #edf2ff 100%);
+    }
+
+    body::before {
+      content: "ABC 123 ABC 123";
+      position: fixed;
+      inset: auto -30px 20px auto;
+      color: rgba(69, 135, 255, 0.11);
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      font-weight: 900;
+      transform: rotate(-10deg);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    header {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding: 22px;
+      border: 4px solid #ffffff;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.76)),
+        linear-gradient(135deg, #ffe66d, #8ce99a);
+      box-shadow: 0 16px 0 rgba(33, 48, 71, 0.08), 0 22px 42px rgba(33, 48, 71, 0.12);
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: #63708a;
+      font-size: clamp(1rem, 2.3vw, 1.25rem);
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .score-board {
+      min-width: 176px;
+      border: 3px solid #fff;
+      border-radius: 18px;
+      background: #213047;
+      color: #fff;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 8px 0 rgba(33, 48, 71, 0.12);
+    }
+
+    .score-board span {
+      display: block;
+      color: #ffec99;
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+
+    .score-board strong {
+      display: block;
+      font-size: 2.25rem;
+      line-height: 1;
+      margin-top: 4px;
+    }
+
+    .toolbar {
+      grid-column: 1 / -1;
+    }
+
+    .toolbar select,
+    .toolbar button,
+    .chip,
+    .quiz-actions button,
+    .quiz-choice {
+      border: 3px solid #ffffff;
+      font-weight: 900;
+      box-shadow: 0 6px 0 rgba(33, 48, 71, 0.1);
+    }
+
+    .section,
+    .focus-practice,
+    .listen-quiz {
+      border: 4px solid #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 16px 0 rgba(33, 48, 71, 0.08), 0 22px 42px rgba(33, 48, 71, 0.12);
+    }
+
+    .focus-practice {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .family {
+      border-left: 0;
+      border-top: 10px solid var(--green);
+      border-radius: 18px;
+      box-shadow: 0 9px 0 rgba(33, 48, 71, 0.07);
+    }
+
+    .family:nth-child(2n) {
+      border-left-color: transparent;
+      border-top-color: var(--blue);
+    }
+
+    .family:nth-child(3n) {
+      border-left-color: transparent;
+      border-top-color: var(--rose);
+    }
+
+    .word,
+    .sound-card,
+    .mini-word {
+      border: 3px solid #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 0 rgba(33, 48, 71, 0.08);
+    }
+
+    .word {
+      min-height: 150px;
+      background: #f8fff2;
+    }
+
+    .picture {
+      border-radius: 16px;
+      box-shadow: inset 0 0 0 2px rgba(33, 48, 71, 0.08);
+    }
+
+    .word:hover,
+    .word:focus-visible,
+    .mini-word:hover,
+    .mini-word:focus-visible,
+    .quiz-choice:hover,
+    .quiz-choice:focus-visible {
+      transform: translateY(-4px) rotate(-1deg);
+    }
+
+    .rime-button {
+      border-radius: 16px;
+      background: linear-gradient(135deg, #213047, #3267d6);
+      box-shadow: 0 7px 0 rgba(33, 48, 71, 0.2);
+    }
+
+    .listen-quiz {
+      background: #eefbf4;
+    }
+
+    .all-quiz {
+      background: #eff6ff;
+    }
+
+    .quiz-choice.correct {
+      background: #c9f7df;
+    }
+
+    .quiz-choice.wrong {
+      background: #ffe1e7;
+    }
+
+    .status {
+      border-radius: 18px;
+      background: linear-gradient(135deg, #213047, #3d6f90);
+    }
+
+    .sparkle {
+      animation: pop 520ms ease;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.9);
+      }
+
+      45% {
+        transform: scale(1.08) rotate(-1deg);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .score-board {
+        width: 100%;
+      }
+    }
+
+    .game-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 18px;
+      position: sticky;
+      top: 10px;
+      z-index: 5;
+    }
+
+    .tab-button {
+      border: 3px solid #ffffff;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #213047;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      padding: 14px 10px;
+      box-shadow: 0 7px 0 rgba(33, 48, 71, 0.1);
+    }
+
+    .tab-button.active {
+      background: #ffd43b;
+      color: #213047;
+      transform: translateY(-2px);
+    }
+
+    body[data-view="quiz"] .focus-practice .focus-head,
+    body[data-view="quiz"] .focus-practice .sound-board,
+    body[data-view="quiz"] .layout,
+    body[data-view="practice"] .focus-practice .listen-quiz,
+    body[data-view="practice"] .all-quiz,
+    body[data-view="practice"] .layout,
+    body[data-view="cards"] .focus-practice,
+    body[data-view="cards"] .all-quiz {
+      display: none;
+    }
+
+    body[data-view="quiz"] .focus-practice {
+      margin-bottom: 18px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    @media (max-width: 640px) {
+      .game-tabs {
+        grid-template-columns: 1fr;
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body data-view="quiz">
+  <main>
+    <header>
+      <div>
+        <h1>Sound Quest</h1>
+        <p class="subtitle">聽聲音、點卡片、收集星星。今天來挑戰英文結尾音！</p>
+      </div>
+      <div class="score-board" aria-live="polite">
+        <span>我的星星</span>
+        <strong id="starScore">0</strong>
+      </div>
+      <div class="toolbar" aria-label="控制列">
+        <span class="chip">任務 1：點卡片聽發音</span>
+        <select id="voiceSelect" aria-label="選擇英文語音">
+          <option value="">載入英文語音中...</option>
+        </select>
+        <span class="chip" id="voiceWarning" hidden>file 模式沒有英文語音時會不準；請用小後端開啟</span>
+        <button type="button" id="speakAll">全部巡邏</button>
+        <button type="button" id="stopSpeech">暫停聲音</button>
+      </div>
+    </header>
+
+    <nav class="game-tabs" aria-label="遊戲分頁">
+      <button class="tab-button active" type="button" data-view="quiz">玩小考</button>
+      <button class="tab-button" type="button" data-view="practice">練發音</button>
+      <button class="tab-button" type="button" data-view="cards">單字圖鑑</button>
+    </nav>
+
+    <section class="focus-practice" aria-labelledby="tPracticeTitle">
+      <div class="focus-head">
+        <div>
+          <h2 id="tPracticeTitle">任務 2：T 尾音迷宮</h2>
+          <p>先聽中間母音，再聽整個單字。四組最後都是 t，秘密藏在 e / a / o / i 的短母音。</p>
+        </div>
+        <span class="count">et / at / ot / it</span>
+      </div>
+      <div class="sound-board" id="tPractice"></div>
+      <div class="listen-quiz" aria-labelledby="quizTitle">
+        <div class="quiz-top">
+          <div class="quiz-title">
+            <strong id="quizTitle">任務 3：尾音雷達</strong>
+            <span>按「出題」後只聽聲音，再選你聽到的結尾。</span>
+          </div>
+          <div class="quiz-actions">
+            <button type="button" id="newQuiz">開始挑戰</button>
+            <button type="button" id="repeatQuiz">再聽一次</button>
+          </div>
+        </div>
+        <div class="quiz-choices" id="quizChoices"></div>
+        <div class="quiz-feedback" id="quizFeedback">準備好後按「開始挑戰」。</div>
+      </div>
+    </section>
+
+    <section class="listen-quiz all-quiz" aria-labelledby="allQuizTitle">
+      <div class="quiz-top">
+        <div class="quiz-title">
+          <strong id="allQuizTitle">任務 4：全單字 Boss 關</strong>
+          <span>從全部單字隨機出題。先聽聲音，選完才公布單字、結尾和中文。</span>
+        </div>
+        <div class="quiz-actions">
+          <button type="button" id="newAllQuiz">挑戰 Boss</button>
+          <button type="button" id="repeatAllQuiz">再聽一次</button>
+        </div>
+      </div>
+      <div class="quiz-choices" id="allQuizChoices"></div>
+      <div class="quiz-feedback" id="allQuizFeedback">準備好後按「挑戰 Boss」。</div>
+    </section>
+
+    <div class="layout" id="wordSections"></div>
+
+    <div class="status" aria-live="polite">
+      <span>聲音魔法：<strong id="currentWord">尚未選擇</strong></span>
+      <span id="currentMeaning">點一張卡片開始冒險</span>
+    </div>
+
+    <p class="note">
+      用小後端開啟時，單字會優先使用 OpenAI TTS 產生的 mp3；若直接用 file:// 開啟，才會退回瀏覽器內建語音。
+    </p>
+  </main>
+
+  <script>
+    const sections = [
+      {
+        title: "第 1 關：P 聲音島",
+        families: [
+          { ending: "-ap", words: ["map", "tap", "cap"] },
+          { ending: "-op", words: ["mop", "top", "cop", "hop"] }
+        ]
+      },
+      {
+        title: "第 2 關：G 聲音森林",
+        families: [
+          { ending: "-ag", words: ["bag", "mag", "rag", "tag", "hag"] },
+          { ending: "-ug", words: ["bug", "mug", "hug"] }
+        ]
+      },
+      {
+        title: "第 3 關：T 聲音迷宮",
+        families: [
+          { ending: "-et", words: ["bet", "pet", "jet", "net", "set"] },
+          { ending: "-it", words: ["pit", "sit", "nit"] },
+          { ending: "-at", words: ["sat", "mat"] },
+          { ending: "-ot", words: ["hot", "pot", "dot"] },
+          { ending: "-ut", words: ["but"] }
+        ]
+      },
+      {
+        title: "第 4 關：X 聲音火箭",
+        families: [
+          { ending: "-ix", words: ["fix", "six", "mix", "pix"] },
+          { ending: "-ox", words: ["fox", "sox", "ox", "box", "pox"] }
+        ]
+      }
+    ];
+
+    const tPractice = [
+      { ending: "-et", vowel: "e", hint: "聽 bet / pet / net，比較 e 的短音。", words: ["bet", "pet", "net"] },
+      { ending: "-at", vowel: "a", hint: "聽 sat / mat / cat，比較 a 的短音。", words: ["sat", "mat", "cat"] },
+      { ending: "-ot", vowel: "o", hint: "聽 hot / pot / dot，比較 o 的短音。", words: ["hot", "pot", "dot"] },
+      { ending: "-it", vowel: "i", hint: "聽 pit / sit / nit，比較 i 的短音。", words: ["pit", "sit", "nit"] }
+    ];
+
+    const wordInfo = {
+      map: { zh: "地圖", icon: "🗺️", speech: "map" },
+      tap: { zh: "輕拍；水龍頭", icon: "🚰", speech: "tap" },
+      cap: { zh: "帽子", icon: "🧢", speech: "cap" },
+      mop: { zh: "拖把", icon: "🧹", speech: "mop" },
+      top: { zh: "頂端；陀螺", icon: "🔝", speech: "top" },
+      cop: { zh: "警察", icon: "👮", speech: "cop" },
+      hop: { zh: "單腳跳", icon: "🦘", speech: "hop" },
+      bag: { zh: "袋子；包包", icon: "👜", speech: "bag" },
+      mag: { zh: "mag；雜誌的口語縮寫", icon: "📖", speech: "mag" },
+      rag: { zh: "抹布", icon: "🧽", speech: "rag" },
+      tag: { zh: "標籤", icon: "🏷️", speech: "tag" },
+      hag: { zh: "醜老太婆；女巫", icon: "🧙", speech: "hag" },
+      bug: { zh: "蟲；程式錯誤", icon: "🐞", speech: "bug" },
+      mug: { zh: "馬克杯", icon: "☕", speech: "mug" },
+      hug: { zh: "擁抱", icon: "🤗", speech: "hug" },
+      bet: { zh: "打賭", icon: "🎲", speech: "bet" },
+      pet: { zh: "寵物", icon: "🐶", speech: "pet" },
+      jet: { zh: "噴射機", icon: "✈️", speech: "jet" },
+      net: { zh: "網子", icon: "🥅", speech: "net" },
+      set: { zh: "一組；放置", icon: "🧩", speech: "set" },
+      pit: { zh: "坑洞；果核", icon: "🕳️", speech: "pit" },
+      sit: { zh: "坐", icon: "🪑", speech: "sit" },
+      nit: { zh: "蝨卵；小錯誤", icon: "🔎", speech: "nit" },
+      sat: { zh: "sit 的過去式：坐了", icon: "🪑", speech: "sat" },
+      mat: { zh: "墊子", icon: "▤", speech: "mat" },
+      cat: { zh: "貓", icon: "🐱", speech: "cat" },
+      hot: { zh: "熱的", icon: "🔥", speech: "hot" },
+      pot: { zh: "鍋子", icon: "🍲", speech: "pot" },
+      dot: { zh: "點", icon: "•", speech: "dot" },
+      but: { zh: "但是", icon: "↔️", speech: "but" },
+      fix: { zh: "修理", icon: "🔧", speech: "fix" },
+      six: { zh: "六", icon: "6️⃣", speech: "six" },
+      mix: { zh: "混合", icon: "🥣", speech: "mix" },
+      pix: { zh: "照片 pics 的變體拼法", icon: "📷", speech: "picks" },
+      fox: { zh: "狐狸", icon: "🦊", speech: "fox" },
+      sox: { zh: "襪子 socks 的變體拼法", icon: "🧦", speech: "socks" },
+      ox: { zh: "公牛；牛", icon: "🐂", speech: "ox" },
+      box: { zh: "盒子", icon: "📦", speech: "box" },
+      pox: { zh: "痘；疹病", icon: "🔴", speech: "pox" }
+    };
+
+    const sectionsRoot = document.querySelector("#wordSections");
+    const tPracticeRoot = document.querySelector("#tPractice");
+    const quizChoicesRoot = document.querySelector("#quizChoices");
+    const quizFeedback = document.querySelector("#quizFeedback");
+    const newQuizButton = document.querySelector("#newQuiz");
+    const repeatQuizButton = document.querySelector("#repeatQuiz");
+    const allQuizChoicesRoot = document.querySelector("#allQuizChoices");
+    const allQuizFeedback = document.querySelector("#allQuizFeedback");
+    const newAllQuizButton = document.querySelector("#newAllQuiz");
+    const repeatAllQuizButton = document.querySelector("#repeatAllQuiz");
+    const currentWord = document.querySelector("#currentWord");
+    const currentMeaning = document.querySelector("#currentMeaning");
+    const starScore = document.querySelector("#starScore");
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const voiceSelect = document.querySelector("#voiceSelect");
+    const voiceWarning = document.querySelector("#voiceWarning");
+    const speakAllButton = document.querySelector("#speakAll");
+    const stopButton = document.querySelector("#stopSpeech");
+    let activeButton = null;
+    let playAllTimer = null;
+    let preferredVoice = null;
+    let hasEnglishVoice = false;
+    let currentQuiz = null;
+    let currentAllQuiz = null;
+    let stars = 0;
+
+    const allWords = sections.flatMap((section) =>
+      section.families.flatMap((family) =>
+        family.words.map((word) => ({
+          word,
+          ending: family.ending
+        }))
+      )
+    );
+
+    function chooseVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoices = voices.filter((voice) => /^en-/i.test(voice.lang));
+      hasEnglishVoice = englishVoices.length > 0;
+      voiceWarning.hidden = hasEnglishVoice;
+      voiceSelect.innerHTML = englishVoices.length
+        ? englishVoices.map((voice, index) => `<option value="${index}">${voice.name} (${voice.lang})</option>`).join("")
+        : `<option value="">沒有找到英文語音</option>`;
+
+      preferredVoice = englishVoices.find((voice) => /en-US/i.test(voice.lang) && /natural|aria|jenny|guy|google|microsoft/i.test(voice.name))
+        || voices.find((voice) => /en-US/i.test(voice.lang))
+        || englishVoices[0]
+        || null;
+
+      if (preferredVoice && englishVoices.length) {
+        voiceSelect.value = String(englishVoices.indexOf(preferredVoice));
+      }
+    }
+
+    function updateVoiceFromSelect() {
+      const voices = window.speechSynthesis.getVoices().filter((voice) => /^en-/i.test(voice.lang));
+      preferredVoice = voices[Number(voiceSelect.value)] || preferredVoice;
+      hasEnglishVoice = !!preferredVoice;
+      voiceWarning.hidden = hasEnglishVoice;
+    }
+
+    function makeUtterance(text, rate = 0.66) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.voice = preferredVoice;
+      utterance.rate = hasEnglishVoice ? rate : 0.58;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      return utterance;
+    }
+
+    async function playAudioFile(src) {
+      if (!src) return false;
+
+      try {
+        const audio = new Audio(src);
+        await new Promise((resolve, reject) => {
+          audio.onended = resolve;
+          audio.onerror = reject;
+          audio.play().catch(reject);
+        });
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    async function playOpenAITts(text) {
+      if (!/^https?:$/.test(window.location.protocol)) return false;
+
+      try {
+        const response = await fetch(`/api/tts?word=${encodeURIComponent(text)}`);
+        if (!response.ok) return false;
+
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        await new Promise((resolve, reject) => {
+          audio.onended = resolve;
+          audio.onerror = reject;
+          audio.play().catch(reject);
+        });
+        URL.revokeObjectURL(audioUrl);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    async function playPronunciation(text, rate = 0.66, onEnd = () => {}, audioSrc = "") {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      const usedAudioFile = await playAudioFile(audioSrc);
+      if (usedAudioFile) {
+        onEnd();
+        return;
+      }
+
+      const usedOpenAI = await playOpenAITts(text);
+      if (usedOpenAI) {
+        onEnd();
+        return;
+      }
+
+      if (!("speechSynthesis" in window)) {
+        onEnd();
+        return;
+      }
+
+      await new Promise((resolve) => {
+        const utterance = makeUtterance(text, rate);
+        utterance.onend = () => {
+          onEnd();
+          resolve();
+        };
+        utterance.onerror = () => {
+          onEnd();
+          resolve();
+        };
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    function addStar(points = 1) {
+      stars += points;
+      starScore.textContent = stars;
+      starScore.classList.remove("sparkle");
+      window.setTimeout(() => starScore.classList.add("sparkle"), 10);
+    }
+
+    function switchView(view) {
+      document.body.dataset.view = view;
+      tabButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === view);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderTPractice() {
+      tPracticeRoot.innerHTML = tPractice.map((group) => {
+        const miniWords = group.words.map((word) => {
+          const info = wordInfo[word];
+          const split = word.match(/^(.)(.)(t)$/);
+          const displayWord = split
+            ? `<span class="split-word"><span>${split[1]}</span><span class="middle">${split[2]}</span><span>${split[3]}</span></span>`
+            : word;
+          return `
+            <button class="mini-word" type="button" data-word="${word}" data-ending="${group.ending}">
+              <strong>${displayWord}</strong>
+              <span>${info.zh}</span>
+            </button>
+          `;
+        }).join("");
+
+        return `
+          <article class="sound-card">
+            <button class="rime-button" type="button" data-ending="${group.ending}" aria-label="Listen to ${group.ending}">
+              -<span class="vowel">${group.vowel}</span><span class="tail">t</span>
+            </button>
+            <p class="sound-note">${group.hint}</p>
+            <div class="mini-words">${miniWords}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderQuizChoices() {
+      quizChoicesRoot.innerHTML = tPractice.map((group) => `
+        <button class="quiz-choice" type="button" data-ending="${group.ending}">
+          ${group.ending}
+        </button>
+      `).join("");
+    }
+
+    function sampleChoices(answer, pool, count) {
+      const choices = [answer];
+      const available = pool.filter((word) => word !== answer);
+
+      while (choices.length < count && available.length) {
+        const index = Math.floor(Math.random() * available.length);
+        choices.push(available.splice(index, 1)[0]);
+      }
+
+      return choices.sort(() => Math.random() - 0.5);
+    }
+
+    function renderAllQuizChoices(words = []) {
+      if (!words.length) {
+        allQuizChoicesRoot.innerHTML = `
+          <button class="quiz-choice" type="button" disabled>
+            請先按「挑戰 Boss」
+          </button>
+        `;
+        return;
+      }
+
+      allQuizChoicesRoot.innerHTML = words.map((word) => `
+        <button class="quiz-choice" type="button" data-word="${word}">
+          ${word}
+        </button>
+      `).join("");
+    }
+
+    function render() {
+      sectionsRoot.innerHTML = sections.map((section) => {
+        const wordCount = section.families.reduce((sum, family) => sum + family.words.length, 0);
+        const families = section.families.map((family) => `
+          <article class="family">
+            <div class="ending">
+              <span>${family.ending}</span>
+              <span>${family.words.length} words</span>
+            </div>
+            <div class="word-grid">
+              ${family.words.map((word) => {
+                const info = wordInfo[word];
+                return `
+                  <button class="word" type="button" data-word="${word}" data-ending="${family.ending}" aria-label="${word}，${info.zh}">
+                    <span class="picture" aria-hidden="true">${info.icon}</span>
+                    <span class="english">${word}</span>
+                    <span class="zh">${info.zh}</span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </article>
+        `).join("");
+
+        return `
+          <section class="section">
+            <div class="section-head">
+              <h2>${section.title}</h2>
+              <span class="count">${wordCount} words</span>
+            </div>
+            <div class="families">${families}</div>
+          </section>
+        `;
+      }).join("");
+    }
+
+    async function speak(word, ending, button) {
+      if (activeButton) {
+        activeButton.classList.remove("active");
+      }
+
+      activeButton = button || null;
+      if (activeButton) {
+        activeButton.classList.add("active");
+      }
+
+      const info = wordInfo[word];
+      currentWord.textContent = word;
+      currentMeaning.textContent = `${ending} ending｜${info.zh}`;
+
+      await playPronunciation(info.speech || word, 0.7, () => {
+        if (activeButton === button && activeButton) {
+          activeButton.classList.remove("active");
+          activeButton = null;
+        }
+      }, info.audio);
+    }
+
+    async function speakRaw(text, label, detail, button) {
+      if (activeButton) {
+        activeButton.classList.remove("active");
+      }
+      activeButton = button || null;
+      if (activeButton) {
+        activeButton.classList.add("active");
+      }
+
+      currentWord.textContent = label;
+      currentMeaning.textContent = detail;
+
+      await playPronunciation(text, 0.66, () => {
+        if (activeButton === button && activeButton) {
+          activeButton.classList.remove("active");
+          activeButton = null;
+        }
+      });
+    }
+
+    async function speakWordGroup(words, label, detail, button) {
+      if (activeButton) {
+        activeButton.classList.remove("active");
+      }
+      activeButton = button || null;
+      if (activeButton) {
+        activeButton.classList.add("active");
+      }
+
+      currentWord.textContent = label;
+      currentMeaning.textContent = detail;
+
+      const queue = [...words];
+      async function playNext() {
+        const word = queue.shift();
+        if (!word) {
+          if (activeButton === button && activeButton) {
+            activeButton.classList.remove("active");
+            activeButton = null;
+          }
+          return;
+        }
+
+        await playPronunciation(wordInfo[word].speech || word, 0.62, () => {}, wordInfo[word].audio);
+        window.setTimeout(playNext, 160);
+      }
+
+      playNext();
+    }
+
+    async function speakQuizWord() {
+      if (!currentQuiz) return;
+      currentWord.textContent = "聽力小考";
+      currentMeaning.textContent = "請選 et / at / ot / it";
+
+      await playPronunciation(wordInfo[currentQuiz.word].speech || currentQuiz.word, 0.62, () => {}, wordInfo[currentQuiz.word].audio);
+    }
+
+    async function speakAllQuizWord() {
+      if (!currentAllQuiz) return;
+      currentWord.textContent = "全部單字小考";
+      currentMeaning.textContent = "請選你聽到的單字";
+
+      await playPronunciation(wordInfo[currentAllQuiz.word].speech || currentAllQuiz.word, 0.62, () => {}, wordInfo[currentAllQuiz.word].audio);
+    }
+
+    function startQuiz() {
+      const pool = tPractice.flatMap((group) => group.words.map((word) => ({
+        word,
+        ending: group.ending
+      })));
+      currentQuiz = pool[Math.floor(Math.random() * pool.length)];
+      quizFeedback.textContent = "正在播放，請選你聽到的結尾。";
+      quizChoicesRoot.querySelectorAll(".quiz-choice").forEach((button) => {
+        button.classList.remove("correct", "wrong");
+        button.disabled = false;
+      });
+      speakQuizWord();
+    }
+
+    function answerQuiz(selectedEnding, button) {
+      if (!currentQuiz) {
+        quizFeedback.textContent = "請先按「開始挑戰」。";
+        return;
+      }
+
+      const isCorrect = selectedEnding === currentQuiz.ending;
+      quizChoicesRoot.querySelectorAll(".quiz-choice").forEach((choice) => {
+        choice.classList.toggle("correct", choice.dataset.ending === currentQuiz.ending);
+        choice.classList.toggle("wrong", choice === button && !isCorrect);
+        choice.disabled = true;
+      });
+
+      const info = wordInfo[currentQuiz.word];
+      if (isCorrect) {
+        addStar(1);
+      }
+      quizFeedback.textContent = isCorrect
+        ? `拿到 1 顆星：${currentQuiz.word} 是 ${currentQuiz.ending} ending（${info.zh}）。`
+        : `差一點點：${currentQuiz.word} 是 ${currentQuiz.ending} ending（${info.zh}），再聽一次。`;
+      currentWord.textContent = currentQuiz.word;
+      currentMeaning.textContent = `${currentQuiz.ending} ending｜${info.zh}`;
+      window.setTimeout(speakQuizWord, 350);
+    }
+
+    function startAllQuiz() {
+      currentAllQuiz = allWords[Math.floor(Math.random() * allWords.length)];
+      const choices = sampleChoices(currentAllQuiz.word, allWords.map((item) => item.word), 4);
+      renderAllQuizChoices(choices);
+      allQuizFeedback.textContent = "正在播放，請選你聽到的單字。";
+      speakAllQuizWord();
+    }
+
+    function answerAllQuiz(selectedWord, button) {
+      if (!currentAllQuiz) {
+        allQuizFeedback.textContent = "請先按「挑戰 Boss」。";
+        return;
+      }
+
+      const isCorrect = selectedWord === currentAllQuiz.word;
+      allQuizChoicesRoot.querySelectorAll(".quiz-choice").forEach((choice) => {
+        choice.classList.toggle("correct", choice.dataset.word === currentAllQuiz.word);
+        choice.classList.toggle("wrong", choice === button && !isCorrect);
+        choice.disabled = true;
+      });
+
+      const info = wordInfo[currentAllQuiz.word];
+      if (isCorrect) {
+        addStar(2);
+      }
+      allQuizFeedback.textContent = isCorrect
+        ? `Boss 關成功，拿到 2 顆星：${currentAllQuiz.word} 是 ${currentAllQuiz.ending} ending（${info.zh}）。`
+        : `再聽一次：答案是 ${currentAllQuiz.word}，${currentAllQuiz.ending} ending（${info.zh}）。`;
+      currentWord.textContent = currentAllQuiz.word;
+      currentMeaning.textContent = `${currentAllQuiz.ending} ending｜${info.zh}`;
+      window.setTimeout(speakAllQuizWord, 350);
+    }
+
+    function stopSpeech() {
+      window.clearTimeout(playAllTimer);
+      playAllTimer = null;
+      window.speechSynthesis.cancel();
+      currentWord.textContent = "已停止";
+      currentMeaning.textContent = "點一張卡片開始冒險";
+      if (activeButton) {
+        activeButton.classList.remove("active");
+        activeButton = null;
+      }
+    }
+
+    function speakAll() {
+      const buttons = Array.from(document.querySelectorAll(".word"));
+      let index = 0;
+      window.clearTimeout(playAllTimer);
+
+      function next() {
+        if (index >= buttons.length) return;
+        const button = buttons[index];
+        index += 1;
+        const word = button.dataset.word;
+        const ending = button.dataset.ending;
+        speak(word, ending, button);
+
+        const wait = Math.max(1050, (wordInfo[word].speech || word).length * 260);
+        playAllTimer = window.setTimeout(next, wait);
+      }
+
+      next();
+    }
+
+    renderTPractice();
+    renderQuizChoices();
+    renderAllQuizChoices();
+    render();
+    chooseVoice();
+    window.speechSynthesis.addEventListener("voiceschanged", chooseVoice);
+
+    sectionsRoot.addEventListener("click", (event) => {
+      const button = event.target.closest(".word");
+      if (!button) return;
+      speak(button.dataset.word, button.dataset.ending, button);
+    });
+
+    tPracticeRoot.addEventListener("click", (event) => {
+      const soundButton = event.target.closest(".rime-button");
+      if (soundButton) {
+        const group = tPractice.find((item) => item.ending === soundButton.dataset.ending);
+        speakWordGroup(group.words, group.ending, group.hint, soundButton);
+        return;
+      }
+
+      const wordButton = event.target.closest(".mini-word");
+      if (!wordButton) return;
+      speak(wordButton.dataset.word, wordButton.dataset.ending, wordButton);
+    });
+
+    quizChoicesRoot.addEventListener("click", (event) => {
+      const button = event.target.closest(".quiz-choice");
+      if (!button) return;
+      answerQuiz(button.dataset.ending, button);
+    });
+
+    allQuizChoicesRoot.addEventListener("click", (event) => {
+      const button = event.target.closest(".quiz-choice");
+      if (!button) return;
+      answerAllQuiz(button.dataset.word, button);
+    });
+
+    voiceSelect.addEventListener("change", updateVoiceFromSelect);
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => switchView(button.dataset.view));
+    });
+    newQuizButton.addEventListener("click", startQuiz);
+    repeatQuizButton.addEventListener("click", speakQuizWord);
+    newAllQuizButton.addEventListener("click", startAllQuiz);
+    repeatAllQuizButton.addEventListener("click", speakAllQuizWord);
+    speakAllButton.addEventListener("click", speakAll);
+    stopButton.addEventListener("click", stopSpeech);
+  </script>
+</body>
+</html>
